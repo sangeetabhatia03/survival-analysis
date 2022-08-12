@@ -1,0 +1,51 @@
+---
+output: 
+pdf_document:
+citation_package: natbib
+keep_tex: false
+fig_caption: true
+latex_engine: pdflatex
+title: Regression Models for Survival Data
+author:
+- name: Sangeeta Bhatia
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+spacing: double
+bibliography: 
+biblio-style: apsr
+endnote: no
+---
+
+```{r setup, eval = TRUE}
+library(dplyr)
+library(ggplot2)
+library(here)
+library(purrr)
+library(tidyr)
+```
+# Exercise 1
+
+(a) Using the data from the German Breast Cancer Study with recurrence
+time as the survival time variable and recurrence status as the
+censoring variable, fit the proportional hazards model containing age,
+menopause status, hormone therapy, tumor size, number of nodes,
+number of progesterone receptors, and number of estrogen receptors.
+
+```{r}
+german_bc <- read.table(
+  "second_edition_data/gbcs.dat", sep = "\t", header = FALSE
+)
+for (row in 1:nrow(german_bc)) german_bc[row, ] <- trimws(german_bc[row, ])
+cols <- c(
+  "id", "diagdate", "recdate", "deathdate", "age", "menopause",
+  "hormone", "size", "grade", "nodes", "prog_recp", "estrg_recp",
+  "rectime", "censrec", "survtime", "censdead"
+)
+
+german_bc <- separate(german_bc, col = "V1", into = cols)
+german_bc$survtime <- as.numeric(german_bc$survtime)
+german_bc$censrec <- as.integer(german_bc$censrec)
+
+```
